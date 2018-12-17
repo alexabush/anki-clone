@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import uuid from 'uuidv4'
+import uuid from 'uuid/v4';
 import './App.css';
 
 const cardsData = [];
@@ -40,17 +40,22 @@ class App extends Component {
     });
   }
 
-  changeRating = (cardId, rating = 'hard') => {
+  updateCardRating = (cardId, rating = 'hard') => {
+    this.setState(prev => {
+      prev.currentCard[rating] += 1;
+      prev.priorityQueue.push(prev.currentCard)
+      let newCurrentCard = prev.priorityQueue.shift()
+      return {currentCard: newCurrentCard, priorityQueue: prev.priorityQueue}
+    })
     // make patch to server with updated rating
-
     // push to priority queue with new rating and 'priorityScore'
   };
 
   render() {
-    console.log('this.state', this.state)
+    console.log('this.state', this.state);
     return (
       <div>
-        <Card data={this.state.currentCard} />
+        <Card data={this.state.currentCard} updateCardRating={this.updateCardRating} />
         <Buttons />
       </div>
     );
@@ -58,14 +63,75 @@ class App extends Component {
 }
 
 class Card extends Component {
+  state = { showAnswer: true, selected: 'hard' };
+  clickHandler = () => {
+    this.setState({ showAnswer: true });
+  };
+
+  handleSelectChange = e => {
+    this.setState({ selected: e.target.value });
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    console.log(this.props);
+    this.props.updateCardRating(this.props.data.id, this.state.selected);
+  };
+
   render() {
     let { question, answer, id } = this.props.data;
-    return (
-      <div>
-        <p>{question}</p>
-        <p>{answer}</p>
-      </div>
-    );
+    if (!this.state.showAnswer) {
+      return (
+        <div className="Card">
+          <p>{question}</p>
+          <button className="showAnswerBtn" onClick={this.clickHandler}>
+            Show Answer
+          </button>
+        </div>
+      );
+    } else {
+      return (
+        <div className="Card">
+          <p>{answer}</p>
+          <form onSubmit={this.handleSubmit}>
+            <div className="radio">
+              <label>
+                <input
+                  type="radio"
+                  value="easy"
+                  checked={this.state.selected === 'easy'}
+                  onChange={this.handleSelectChange}
+                />
+                Easy
+              </label>
+            </div>
+            <div className="radio">
+              <label>
+                <input
+                  type="radio"
+                  value="medium"
+                  checked={this.state.selected === 'medium'}
+                  onChange={this.handleSelectChange}
+                />
+                Medium
+              </label>
+            </div>
+            <div className="radio">
+              <label>
+                <input
+                  type="radio"
+                  value="hard"
+                  checked={this.state.selected === 'hard'}
+                  onChange={this.handleSelectChange}
+                />
+                Hard
+              </label>
+            </div>
+            <button type="submit">Save</button>
+          </form>
+        </div>
+      );
+    }
   }
 }
 
