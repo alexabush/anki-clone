@@ -3,14 +3,22 @@ import uuid from 'uuid/v4';
 import './App.css';
 
 const cardsData = [];
-cardsData.push(createCard('What color is the sky?', 'Go play outside'));
-cardsData.push(createCard('What color is the ocean?', 'Blue'));
-cardsData.push(createCard('Why?', 'Go watch tv'));
-cardsData.push(createCard('Chicken or egg?', 'What is chicken?'));
+// cardsData.push(createCard('What color is the sky?', 'Go play outside'));
+// cardsData.push(createCard('What color is the ocean?', 'Blue'));
+// cardsData.push(createCard('Why?', 'Go watch tv'));
+// cardsData.push(createCard('Chicken or egg?', 'What is chicken?'));
 // cardsData.push(createCard('Are you my mother?', 'Umm'));
 // cardsData.push(createCard('Knock Knock?', '...'));
 // cardsData.push(createCard('How?', 'What?'));
 // cardsData.push(createCard('Does food === food?', 'Nope'));
+cardsData.push(createCard('q1', 'a1'));
+cardsData.push(createCard('q2', 'a2'));
+cardsData.push(createCard('q3', 'a3'));
+cardsData.push(createCard('q4', 'a4'));
+cardsData.push(createCard('q5', 'a5'));
+cardsData.push(createCard('q6', 'a6'));
+cardsData.push(createCard('q7', 'a7'));
+cardsData.push(createCard('q8', 'a8'));
 
 function createCard(q, a) {
   // add an uuid id
@@ -18,12 +26,12 @@ function createCard(q, a) {
     id: uuid(),
     question: q,
     answer: a,
+    priority: 0,
     ratings: {
       easy: 0,
       medium: 0,
       hard: 0
-    },
-    priorityScore: 0
+    }
   };
 }
 
@@ -36,7 +44,7 @@ class App extends Component {
   componentDidMount() {
     // api/data
     this.setState(() => {
-      let queue = new PriorityQueue()
+      let queue = new PriorityQueue();
       for (let card of cardsData) {
         queue.push(card);
       }
@@ -47,13 +55,13 @@ class App extends Component {
 
   updateCardRating = (cardId, rating = 'hard') => {
     this.setState(prev => {
-      let prevCard = prev.currentCard
+      let prevCard = prev.currentCard;
       prevCard.ratings[rating] += 1;
-      prevCard.priority = calcPriority(prevCard.ratings)
-      prev.priorityQueue.push(prevCard)
-      let newCurrentCard = prev.priorityQueue.pop()
-      return {currentCard: newCurrentCard, priorityQueue: prev.priorityQueue}
-    })
+      prevCard.priority = calcPriority(prevCard.ratings);
+      prev.priorityQueue.push(prevCard);
+      let newCurrentCard = prev.priorityQueue.pop();
+      return { currentCard: newCurrentCard, priorityQueue: prev.priorityQueue };
+    });
     // make patch to server with updated rating
   };
 
@@ -61,8 +69,11 @@ class App extends Component {
     console.log('this.state', this.state);
     return (
       <div>
-        <Card data={this.state.currentCard} updateCardRating={this.updateCardRating} />
-        <Buttons />
+        <Card
+          data={this.state.currentCard}
+          updateCardRating={this.updateCardRating}
+        />
+        <Deck currentCard={this.state.currentCard} priorityQueue={this.state.priorityQueue} />
       </div>
     );
   }
@@ -85,7 +96,7 @@ class Card extends Component {
   };
 
   render() {
-    console.log(this.state.priorityQueue)
+    console.log(this.state.priorityQueue);
     let { question, answer, id } = this.props.data;
     if (!this.state.showAnswer) {
       return (
@@ -143,43 +154,63 @@ class Card extends Component {
   }
 }
 
-class Buttons extends Component {
+class Deck extends Component {
   render() {
-    return <div />;
+    let cardLis = [];
+    if (this.props.priorityQueue.getDeck) {
+      cardLis = this.props.priorityQueue.getDeck.map(card => {
+        return <li>{`${card.question} ${card.priority}`}</li>;
+      });
+    }
+    cardLis.push(
+      <li>{`${this.props.currentCard.question} ${
+        this.props.currentCard.priority
+      }`}</li>
+    );
+    return (
+      <div>
+        <ul>{cardLis}</ul>
+      </div>
+    );
   }
 }
 
 class PriorityQueue {
   constructor() {
-    this.queue = []
+    this.queue = [];
   }
 
-  push = (card) => {
-    for (let i = this.queue.length - 1; i >= 0; i++) {
-      if (this.queue[i].priority > card.priority) continue;
-      this.queue.splice(i, 0, card)
+  get getDeck() {
+    return this.queue;
+  }
+
+  push = card => {
+    for (let i = this.queue.length - 1; i >= 0; i--) {
+      if (this.queue[i].priority < card.priority) continue;
+      debugger
+      this.queue.splice(i+1, 0, card);
       return;
     }
-    this.queue.unshift(card)
-  }
+    this.queue.unshift(card);
+  };
 
   pop = () => {
     let card = this.queue.pop();
     return card;
-  }
+  };
 }
 
 function calcPriority(ratings = {}) {
   let lookup = {
-    easy: 3,
-    medium: 2,
-    hard:1
-  }
+    easy: 10,
+    medium: 5,
+    hard: 1
+  };
   let priorityScore = Object.keys(ratings).reduce((acc, key) => {
-    acc += ratings[key] * lookup[key]
-    return acc
-  }, 0)
-  return priorityScore
+    acc += ratings[key] * lookup[key];
+    return acc;
+  }, 0);
+  return priorityScore;
 }
 
 export default App;
