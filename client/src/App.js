@@ -6,6 +6,11 @@ const cardsData = [];
 cardsData.push(createCard('What color is the sky?', 'Go play outside'));
 cardsData.push(createCard('What color is the ocean?', 'Blue'));
 cardsData.push(createCard('Why?', 'Go watch tv'));
+cardsData.push(createCard('Chicken or egg?', 'What is chicken?'));
+// cardsData.push(createCard('Are you my mother?', 'Umm'));
+// cardsData.push(createCard('Knock Knock?', '...'));
+// cardsData.push(createCard('How?', 'What?'));
+// cardsData.push(createCard('Does food === food?', 'Nope'));
 
 function createCard(q, a) {
   // add an uuid id
@@ -31,24 +36,25 @@ class App extends Component {
   componentDidMount() {
     // api/data
     this.setState(() => {
-      let newQueue = [];
+      let queue = new PriorityQueue()
       for (let card of cardsData) {
-        newQueue.push(card);
+        queue.push(card);
       }
-      let newCard = newQueue.shift();
-      return { priorityQueue: newQueue, currentCard: newCard };
+      let newCard = queue.pop();
+      return { priorityQueue: queue, currentCard: newCard };
     });
   }
 
   updateCardRating = (cardId, rating = 'hard') => {
     this.setState(prev => {
-      prev.currentCard[rating] += 1;
-      prev.priorityQueue.push(prev.currentCard)
-      let newCurrentCard = prev.priorityQueue.shift()
+      let prevCard = prev.currentCard
+      prevCard.ratings[rating] += 1;
+      prevCard.priority = calcPriority(prevCard.ratings)
+      prev.priorityQueue.push(prevCard)
+      let newCurrentCard = prev.priorityQueue.pop()
       return {currentCard: newCurrentCard, priorityQueue: prev.priorityQueue}
     })
     // make patch to server with updated rating
-    // push to priority queue with new rating and 'priorityScore'
   };
 
   render() {
@@ -79,6 +85,7 @@ class Card extends Component {
   };
 
   render() {
+    console.log(this.state.priorityQueue)
     let { question, answer, id } = this.props.data;
     if (!this.state.showAnswer) {
       return (
@@ -92,6 +99,7 @@ class Card extends Component {
     } else {
       return (
         <div className="Card">
+          <p>{question}</p>
           <p>{answer}</p>
           <form onSubmit={this.handleSubmit}>
             <div className="radio">
@@ -140,4 +148,38 @@ class Buttons extends Component {
     return <div />;
   }
 }
+
+class PriorityQueue {
+  constructor() {
+    this.queue = []
+  }
+
+  push = (card) => {
+    for (let i = this.queue.length - 1; i >= 0; i++) {
+      if (this.queue[i].priority > card.priority) continue;
+      this.queue.splice(i, 0, card)
+      return;
+    }
+    this.queue.unshift(card)
+  }
+
+  pop = () => {
+    let card = this.queue.pop();
+    return card;
+  }
+}
+
+function calcPriority(ratings = {}) {
+  let lookup = {
+    easy: 3,
+    medium: 2,
+    hard:1
+  }
+  let priorityScore = Object.keys(ratings).reduce((acc, key) => {
+    acc += ratings[key] * lookup[key]
+    return acc
+  }, 0)
+  return priorityScore
+}
+
 export default App;
