@@ -63,8 +63,9 @@ class App extends Component {
   };
 
   deleteCard = cardId => {
+    // bug where if current card is deleted it doesn't get deleted
     this.setState(prev => {
-      let modifiedQueue = prev.priorityQueue.removeById(cardId)
+      let modifiedQueue = prev.priorityQueue.removeById(cardId);
       return { priorityQueue: modifiedQueue };
     });
   };
@@ -225,7 +226,7 @@ class Deck extends Component {
     if (this.props.priorityQueue.getDeck) {
       cardLis = this.props.priorityQueue.getDeck.map(card => {
         return (
-          <li>
+          <li key={uuid()}>
             {`${card.question} ${card.priority}`}
             <Delete onClick={() => this.handleDelete(card.id)} />
           </li>
@@ -267,11 +268,11 @@ class PriorityQueue {
     return this.queue[this.queue.length - 1];
   };
 
-  removeById = (cardId) => {
+  removeById = cardId => {
     this.queue = this.queue.filter(card => {
-      return (card.id !== cardId)
-    })
-    return this
+      return card.id !== cardId;
+    });
+    return this;
   };
 }
 
