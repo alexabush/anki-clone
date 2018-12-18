@@ -3,12 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "dev": "concurrently \"yarn run server\" \"yarn run client\"",
+    "server": "nodemon ./bin/www",
+    "client": "cd client && yarn start"
   },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "~1.17.1",
+    "concurrently": "^4.1.0",
     "cookie-parser": "~1.4.3",
+    "cors": "^2.8.5",
     "debug": "~2.6.3",
     "dotenv": "^6.2.0",
     "express": "~4.15.2",

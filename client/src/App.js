@@ -43,7 +43,13 @@ class App extends Component {
   };
 
   componentDidMount() {
-    // api/data
+    console.log('in component did mount');
+    fetch('http://localhost:3001/api')
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+      });
+
     this.setState(() => {
       let queue = new PriorityQueue();
       for (let card of cardsData) {

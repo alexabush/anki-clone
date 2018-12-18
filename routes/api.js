@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../server/models/index');
-var _ = require('lodash')
+var _ = require('lodash');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -39,15 +39,14 @@ router
     });
   })
   .put(function(req, res, next) {
-    let newData = _.pickBy(req.body, data => !!data)
-    models.User.update(newData,
-      { returning: true, where: { id: req.params.id } })
-      .then(
-        queryData => {
-          let updatedTodo = queryData[1];
-          res.json({ message: 'updated a user', data: updatedTodo });
-        }
-      );
+    let newData = _.pickBy(req.body, data => !!data);
+    models.User.update(newData, {
+      returning: true,
+      where: { id: req.params.id }
+    }).then(queryData => {
+      let updatedTodo = queryData[1];
+      res.json({ message: 'updated a user', data: updatedTodo });
+    });
   })
   .delete(function(req, res, next) {
     models.User.destroy({
@@ -56,14 +55,15 @@ router
       }
     }).then(() => {
       res.json({ message: 'deleted a user' });
-    })
+    });
   });
 // ROUTER FOR DECKS => GET ALL, POST
 router
   .route('/users/:id/decks')
   .get(function(req, res, next) {
-    console.log('in / decks get');
-    res.json({ message: 'this is all decks' });
+    models.Decks.findAll().then(users => {
+      res.json({ message: 'this is all users', data: users });
+    });
   })
   .post(function(req, res, next) {
     // get user data from req

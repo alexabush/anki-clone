@@ -24,6 +24,8 @@ div, .col-sm-6 {
   align-items: center;
   padding: 20px 0;
 
+  min-height: 200px;
+
 }
 
 .Deck {
