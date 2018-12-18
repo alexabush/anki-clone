@@ -11,7 +11,6 @@ var http = require('http');
 /**
  * Get port from environment and store in Express.
  */
-console.log('got here in app.js 1');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
@@ -58,7 +57,6 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-  console.log('got here in www');
 
   var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 

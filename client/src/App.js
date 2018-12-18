@@ -23,7 +23,6 @@ cardsData.push(createCard('q7', 'a7'));
 cardsData.push(createCard('q8', 'a8'));
 
 function createCard(q, a) {
-  // add an uuid id
   return {
     id: uuid(),
     question: q,
@@ -85,24 +84,32 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <Card
-          data={this.state.currentCard}
-          updateCardRating={this.updateCardRating}
-        />
-        <Deck
-          currentCard={this.state.currentCard}
-          priorityQueue={this.state.priorityQueue}
-          deleteCard={this.deleteCard}
-        />
-        <AddCard addCard={this.addCard} />
+      <div className="App">
+        <div className="container">
+          <div className="row">
+            <div className="col-sm-6">
+              <Card
+                data={this.state.currentCard}
+                updateCardRating={this.updateCardRating}
+              />
+            </div>
+            <div className="col-sm-6">
+              <Deck
+                currentCard={this.state.currentCard}
+                priorityQueue={this.state.priorityQueue}
+                deleteCard={this.deleteCard}
+              />
+              <AddCardForm addCard={this.addCard} />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 }
 
 class Card extends Component {
-  state = { showAnswer: true, selected: 'hard' };
+  state = { showAnswer: false, selected: 'hard' };
   clickHandler = () => {
     this.setState({ showAnswer: true });
   };
@@ -118,7 +125,6 @@ class Card extends Component {
   };
 
   render() {
-    console.log(this.state.priorityQueue);
     let { question, answer, id } = this.props.data;
     if (!this.state.showAnswer) {
       return (
@@ -176,7 +182,7 @@ class Card extends Component {
   }
 }
 
-class AddCard extends Component {
+class AddCardForm extends Component {
   state = { q: '', a: '' };
 
   handleChange = e => {
@@ -191,27 +197,29 @@ class AddCard extends Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Question:
-          <input
-            type="text"
-            name="q"
-            value={this.state.q}
-            onChange={this.handleChange}
-          />
-        </label>
-        <label>
-          Answer:
-          <input
-            type="text"
-            name="a"
-            value={this.state.a}
-            onChange={this.handleChange}
-          />
-        </label>
-        <button type="submit">Submit</button>
-      </form>
+      <div className="AddCardForm">
+        <form onSubmit={this.handleSubmit}>
+          <label>
+            Question:
+            <input
+              type="text"
+              name="q"
+              value={this.state.q}
+              onChange={this.handleChange}
+            />
+          </label>
+          <label>
+            Answer:
+            <input
+              type="text"
+              name="a"
+              value={this.state.a}
+              onChange={this.handleChange}
+            />
+          </label>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     );
   }
 }
@@ -234,7 +242,7 @@ class Deck extends Component {
       });
     }
     return (
-      <div>
+      <div className="Deck">
         <ul>{cardLis}</ul>
       </div>
     );
