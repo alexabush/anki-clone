@@ -62,7 +62,12 @@ class App extends Component {
     });
   };
 
-  deleteCard = () => {};
+  deleteCard = cardId => {
+    this.setState(prev => {
+      let modifiedQueue = prev.priorityQueue.removeById(cardId)
+      return { priorityQueue: modifiedQueue };
+    });
+  };
 
   updateCardRating = (cardId, rating = 'hard') => {
     this.setState(prev => {
@@ -87,6 +92,7 @@ class App extends Component {
         <Deck
           currentCard={this.state.currentCard}
           priorityQueue={this.state.priorityQueue}
+          deleteCard={this.deleteCard}
         />
         <AddCard addCard={this.addCard} />
       </div>
@@ -210,7 +216,9 @@ class AddCard extends Component {
 }
 
 class Deck extends Component {
-  handleDelete = () => {};
+  handleDelete = id => {
+    this.props.deleteCard(id);
+  };
 
   render() {
     let cardLis = [];
@@ -218,7 +226,8 @@ class Deck extends Component {
       cardLis = this.props.priorityQueue.getDeck.map(card => {
         return (
           <li>
-            {`${card.question} ${card.priority}`} <Delete />
+            {`${card.question} ${card.priority}`}
+            <Delete onClick={() => this.handleDelete(card.id)} />
           </li>
         );
       });
@@ -242,7 +251,6 @@ class PriorityQueue {
 
   push = card => {
     for (let i = this.queue.length - 1; i >= 0; i--) {
-      debugger;
       if (this.queue[i].priority < card.priority) continue;
       this.queue.splice(i + 1, 0, card);
       return;
@@ -256,7 +264,14 @@ class PriorityQueue {
   };
 
   peek = () => {
-    return this.queue[this.queue.length -1];
+    return this.queue[this.queue.length - 1];
+  };
+
+  removeById = (cardId) => {
+    this.queue = this.queue.filter(card => {
+      return (card.id !== cardId)
+    })
+    return this
   };
 }
 
