@@ -35,6 +35,15 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      deckId: {
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
+        references: {
+          model: 'Decks',
+          key: 'id',
+          as: 'deckId',
+        },
       }
     });
   },
