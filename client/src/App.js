@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import uuid from 'uuid/v4';
 import './App.css';
 
+import Delete from '@material-ui/icons/Delete';
+
 const cardsData = [];
 // cardsData.push(createCard('What color is the sky?', 'Go play outside'));
 // cardsData.push(createCard('What color is the ocean?', 'Blue'));
@@ -48,32 +50,45 @@ class App extends Component {
       for (let card of cardsData) {
         queue.push(card);
       }
-      let newCard = queue.pop();
+      let newCard = queue.peek();
       return { priorityQueue: queue, currentCard: newCard };
     });
   }
+
+  addCard = (q, a) => {
+    this.setState(prev => {
+      prev.priorityQueue.push(createCard(q, a));
+      return { priorityQueue: prev.priorityQueue };
+    });
+  };
+
+  deleteCard = () => {};
 
   updateCardRating = (cardId, rating = 'hard') => {
     this.setState(prev => {
       let prevCard = prev.currentCard;
       prevCard.ratings[rating] += 1;
       prevCard.priority = calcPriority(prevCard.ratings);
+      prev.priorityQueue.pop();
       prev.priorityQueue.push(prevCard);
-      let newCurrentCard = prev.priorityQueue.pop();
+      let newCurrentCard = prev.priorityQueue.peek();
       return { currentCard: newCurrentCard, priorityQueue: prev.priorityQueue };
     });
     // make patch to server with updated rating
   };
 
   render() {
-    console.log('this.state', this.state);
     return (
       <div>
         <Card
           data={this.state.currentCard}
           updateCardRating={this.updateCardRating}
         />
-        <Deck currentCard={this.state.currentCard} priorityQueue={this.state.priorityQueue} />
+        <Deck
+          currentCard={this.state.currentCard}
+          priorityQueue={this.state.priorityQueue}
+        />
+        <AddCard addCard={this.addCard} />
       </div>
     );
   }
@@ -154,19 +169,60 @@ class Card extends Component {
   }
 }
 
+class AddCard extends Component {
+  state = { q: '', a: '' };
+
+  handleChange = e => {
+    let { name, value } = e.target;
+    this.setState({ [name]: e.target.value });
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.addCard(this.state.q, this.state.a);
+  };
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Question:
+          <input
+            type="text"
+            name="q"
+            value={this.state.q}
+            onChange={this.handleChange}
+          />
+        </label>
+        <label>
+          Answer:
+          <input
+            type="text"
+            name="a"
+            value={this.state.a}
+            onChange={this.handleChange}
+          />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    );
+  }
+}
+
 class Deck extends Component {
+  handleDelete = () => {};
+
   render() {
     let cardLis = [];
     if (this.props.priorityQueue.getDeck) {
       cardLis = this.props.priorityQueue.getDeck.map(card => {
-        return <li>{`${card.question} ${card.priority}`}</li>;
+        return (
+          <li>
+            {`${card.question} ${card.priority}`} <Delete />
+          </li>
+        );
       });
     }
-    cardLis.push(
-      <li>{`${this.props.currentCard.question} ${
-        this.props.currentCard.priority
-      }`}</li>
-    );
     return (
       <div>
         <ul>{cardLis}</ul>
@@ -186,9 +242,9 @@ class PriorityQueue {
 
   push = card => {
     for (let i = this.queue.length - 1; i >= 0; i--) {
+      debugger;
       if (this.queue[i].priority < card.priority) continue;
-      debugger
-      this.queue.splice(i+1, 0, card);
+      this.queue.splice(i + 1, 0, card);
       return;
     }
     this.queue.unshift(card);
@@ -197,6 +253,10 @@ class PriorityQueue {
   pop = () => {
     let card = this.queue.pop();
     return card;
+  };
+
+  peek = () => {
+    return this.queue[this.queue.length -1];
   };
 }
 
