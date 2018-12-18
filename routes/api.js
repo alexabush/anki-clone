@@ -61,60 +61,97 @@ router
 router
   .route('/users/:id/decks')
   .get(function(req, res, next) {
-    models.Decks.findAll().then(users => {
-      res.json({ message: 'this is all users', data: users });
+    models.Deck.findAll().then(decks => {
+      res.json({ message: 'this is all decks', data: decks });
     });
   })
   .post(function(req, res, next) {
     // get user data from req
-    console.log('in / decks post');
-    res.json({ message: 'posted a deck' });
+    models.Deck.create({
+      name: req.body.name
+    }).then(function(deck) {
+      res.json({ message: 'posted a deck', data: deck });
+    });
   });
 // ROUTER FOR DECKS => GET BY ID, UPDATE, DELETE
 router
   .route('/users/:id/decks/:deckId')
   .get(function(req, res, next) {
-    console.log('in / deck get by id');
-    res.json({ message: 'got deck by id' });
+    // res.json({params: req.params})
+    models.Deck.findOne({
+      where: { deckId: req.params.deckId }
+    }).then(deck => {
+      res.json({ message: 'got deck by id', data: deck });
+    });
   })
   .put(function(req, res, next) {
-    // get deck data from req
-    console.log('in / deck update');
-    res.json({ message: 'updated a deck' });
+    let newData = _.pickBy(req.body, data => !!data);
+    models.Deck.update(newData, {
+      returning: true,
+      where: { deckId: req.params.deckId }
+    }).then(queryData => {
+      let updatedTodo = queryData[1];
+      res.json({ message: 'updated a deck', data: updatedTodo });
+    });
   })
   .delete(function(req, res, next) {
-    // get deck data from req
-    console.log('in / deck delete');
-    res.json({ message: 'deleted a deck' });
+    models.Deck.destroy({
+      where: {
+        deckId: req.params.deckId
+      }
+    }).then(() => {
+      res.json({ message: 'deleted a deck' });
+    });
   });
 // ROUTER FOR CARDS => GET ALL, POST
 router
   .route('/users/:id/decks/:deckId/cards')
   .get(function(req, res, next) {
-    console.log('in / cards get');
-    res.json({ message: 'this is all cards' });
+    models.Card.findAll().then(cards => {
+      res.json({ message: 'this is all cards', data: cards });
+    });
   })
   .post(function(req, res, next) {
-    // get user data from req
-    console.log('in / cards post');
-    res.json({ message: 'posted a card' });
+    let { question, answer, easy, medium, hard, priority } = req.body;
+    models.Card.create({
+      question,
+      answer,
+      easy,
+      medium,
+      hard,
+      priority
+    }).then(function(card) {
+      res.json({ message: 'posted a card', data: card });
+    });
   });
 // ROUTER FOR CARDS => GET BY ID, UPDATE, DELETE
 router
   .route('/users/:id/decks/:deckId/cards/:cardId')
   .get(function(req, res, next) {
-    console.log('in / card get by id');
-    res.json({ message: 'got card by id' });
+    models.Card.findOne({
+      where: { cardId: req.params.cardId }
+    }).then(card => {
+      res.json({ message: 'got card by id', data: card });
+    });
   })
   .put(function(req, res, next) {
-    // get deck data from req
-    console.log('in / card update');
-    res.json({ message: 'updated a card' });
+    let newData = _.pickBy(req.body, data => !!data);
+    models.Card.update(newData, {
+      returning: true,
+      where: { cardId: req.params.cardId }
+    }).then(queryData => {
+      let updatedCard = queryData[1];
+      res.json({ message: 'updated a user', data: updatedCard });
+    });
   })
   .delete(function(req, res, next) {
-    // get card data from req
-    console.log('in / card delete');
-    res.json({ message: 'deleted a card' });
+    models.Card.destroy({
+      where: {
+        cardId: req.params.cardId
+      }
+    }).then(() => {
+      res.json({ message: 'deleted a card' });
+    });
   });
 
 module.exports = router;
