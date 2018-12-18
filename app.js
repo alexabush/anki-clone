@@ -26,6 +26,7 @@ app.use(function(req, res, next) {
   next(err);
 });
 
+console.log('got here')
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
