@@ -11,10 +11,22 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
-      easy: DataTypes.INTEGER,
-      medium: DataTypes.INTEGER,
-      hard: DataTypes.INTEGER,
-      priority: DataTypes.INTEGER
+      easy: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
+      medium: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
+      hard: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
+      priority: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      }
     },
     {}
   );

@@ -17,16 +17,20 @@ module.exports = {
         allowNull: false
       },
       easy: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       },
       medium: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       },
       hard: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       },
       priority: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       },
       createdAt: {
         allowNull: false,
@@ -42,8 +46,8 @@ module.exports = {
         references: {
           model: 'Decks',
           key: 'id',
-          as: 'deckId',
-        },
+          as: 'deckId'
+        }
       }
     });
   },

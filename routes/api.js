@@ -14,7 +14,7 @@ router
   .route('/users')
   .get(function(req, res, next) {
     models.User.findAll().then(users => {
-      res.json({ message: 'this is all users', data: users });
+      res.json({ message: 'this is all users', users });
     });
   })
   .post(function(req, res, next) {
@@ -24,7 +24,7 @@ router
       email,
       password
     }).then(function(user) {
-      res.json({ message: 'posted a user', data: user });
+      res.json({ message: 'posted a user', user });
     });
   });
 // ROUTER FOR USERS => GET BY ID, UPDATE, DELETE
@@ -35,7 +35,7 @@ router
     models.User.findOne({
       where: { id: req.params.userId }
     }).then(user => {
-      res.json({ message: 'got user by id', data: user });
+      res.json({ message: 'got user by id', user });
     });
   })
   .put(function(req, res, next) {
@@ -44,8 +44,8 @@ router
       returning: true,
       where: { id: req.params.userId }
     }).then(queryData => {
-      let updatedTodo = queryData[1];
-      res.json({ message: 'updated a user', data: updatedTodo });
+      let updatedUser = queryData[1];
+      res.json({ message: 'updated a user', updatedUser });
     });
   })
   .delete(function(req, res, next) {
@@ -62,7 +62,7 @@ router
   .route('/users/:userId/decks')
   .get(function(req, res, next) {
     models.Deck.findAll().then(decks => {
-      res.json({ message: 'this is all decks', data: decks });
+      res.json({ message: 'this is all decks', decks });
     });
   })
   .post(function(req, res, next) {
@@ -71,7 +71,7 @@ router
       name: req.body.name,
       userId: req.params.userId
     }).then(function(deck) {
-      res.json({ message: 'posted a deck', data: deck });
+      res.json({ message: 'posted a deck', deck });
     });
   });
 // ROUTER FOR DECKS => GET BY ID, UPDATE, DELETE
@@ -83,7 +83,7 @@ router
     models.Deck.findOne({
       where: { id: deckId, userId }
     }).then(deck => {
-      res.json({ message: 'got deck by id', data: deck });
+      res.json({ message: 'got deck by id', deck });
     });
   })
   .put(function(req, res, next) {
@@ -94,8 +94,8 @@ router
       where: { id: deckId, userId }
     })
       .then(queryData => {
-        let updatedTodo = queryData[1];
-        res.json({ message: 'updated a deck', data: updatedTodo });
+        let updatedDeck = queryData[1];
+        res.json({ message: 'updated a deck', updatedDeck });
       })
       .catch(e => {
         console.log('error in deckId put');
@@ -115,7 +115,7 @@ router
   .route('/users/:userId/decks/:deckId/cards')
   .get(function(req, res, next) {
     models.Card.findAll().then(cards => {
-      res.json({ message: 'this is all cards', data: cards });
+      res.json({ message: 'this is all cards', cards });
     });
   })
   .post(function(req, res, next) {
@@ -129,7 +129,7 @@ router
       priority,
       deckId: req.params.deckId
     }).then(function(card) {
-      res.json({ message: 'posted a card', data: card });
+      res.json({ message: 'posted a card', card });
     });
   });
 // ROUTER FOR CARDS => GET BY ID, UPDATE, DELETE
@@ -140,7 +140,7 @@ router
     models.Card.findOne({
       where: { id: cardId, deckId }
     }).then(card => {
-      res.json({ message: 'got card by id', data: card });
+      res.json({ message: 'got card by id', card });
     });
   })
   .put(function(req, res, next) {
@@ -151,7 +151,7 @@ router
       where: { id: cardId, deckId }
     }).then(queryData => {
       let updatedCard = queryData[1];
-      res.json({ message: 'updated a user', data: updatedCard });
+      res.json({ message: 'updated a user', updatedCard });
     });
   })
   .delete(function(req, res, next) {

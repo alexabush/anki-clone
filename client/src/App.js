@@ -5,14 +5,6 @@ import './App.css';
 import Delete from '@material-ui/icons/Delete';
 
 const cardsData = [];
-// cardsData.push(createCard('What color is the sky?', 'Go play outside'));
-// cardsData.push(createCard('What color is the ocean?', 'Blue'));
-// cardsData.push(createCard('Why?', 'Go watch tv'));
-// cardsData.push(createCard('Chicken or egg?', 'What is chicken?'));
-// cardsData.push(createCard('Are you my mother?', 'Umm'));
-// cardsData.push(createCard('Knock Knock?', '...'));
-// cardsData.push(createCard('How?', 'What?'));
-// cardsData.push(createCard('Does food === food?', 'Nope'));
 cardsData.push(createCard('q1', 'a1'));
 cardsData.push(createCard('q2', 'a2'));
 cardsData.push(createCard('q3', 'a3'));
@@ -22,16 +14,24 @@ cardsData.push(createCard('q6', 'a6'));
 cardsData.push(createCard('q7', 'a7'));
 cardsData.push(createCard('q8', 'a8'));
 
-function createCard(q, a) {
+function createCard(
+  id,
+  question,
+  answer,
+  easy,
+  medium,
+  hard,
+  priority
+) {
   return {
-    id: uuid(),
-    question: q,
-    answer: a,
-    priority: 0,
+    id,
+    question,
+    answer,
+    priority,
     ratings: {
-      easy: 0,
-      medium: 0,
-      hard: 0
+      easy,
+      medium,
+      hard
     }
   };
 }
@@ -43,21 +43,22 @@ class App extends Component {
   };
 
   componentDidMount() {
-    console.log('in component did mount');
-    fetch('http://localhost:3001/api')
+    // implement auth
+    fetch('http://localhost:3001/api/users/2/decks/4/cards')
       .then(res => res.json())
       .then(data => {
-        console.log(data);
+        this.setState(() => {
+          let queue = new PriorityQueue();
+          for (let card of data.cards) {
+            let { id, question, answer, easy, medium, hard, priority } = card;
+            queue.push(
+              createCard(id, question, answer, easy, medium, hard, priority)
+            );
+          }
+          let newCard = queue.peek();
+          return { priorityQueue: queue, currentCard: newCard };
+        });
       });
-
-    this.setState(() => {
-      let queue = new PriorityQueue();
-      for (let card of cardsData) {
-        queue.push(card);
-      }
-      let newCard = queue.peek();
-      return { priorityQueue: queue, currentCard: newCard };
-    });
   }
 
   addCard = (q, a) => {
@@ -116,6 +117,7 @@ class App extends Component {
 
 class Card extends Component {
   state = { showAnswer: false, selected: 'hard' };
+
   clickHandler = () => {
     this.setState({ showAnswer: true });
   };
