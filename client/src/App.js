@@ -4,6 +4,10 @@ import './App.css';
 
 import Delete from '@material-ui/icons/Delete';
 
+// these will be dynamic later
+let userId = 1;
+let deckId = 1;
+
 const cardsData = [];
 cardsData.push(createCard('q1', 'a1'));
 cardsData.push(createCard('q2', 'a2'));
@@ -62,19 +66,15 @@ class App extends Component {
   }
 
   addCard = (question, answer) => {
-    let userId = 1;
-    let deckId = 1;
     // need deckId. Where do I get this from?
-    fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards`,
-      {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ question, answer, deckId })
-      }
-    );
+    fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ question, answer, deckId })
+    });
     this.setState(prev => {
       prev.priorityQueue.push(createCard(question, answer));
       return { priorityQueue: prev.priorityQueue };
@@ -82,6 +82,14 @@ class App extends Component {
   };
 
   deleteCard = cardId => {
+    fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards/${cardId}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ deckId, cardId })
+    });
     // bug where if current card is deleted it doesn't get deleted
     this.setState(prev => {
       let modifiedQueue = prev.priorityQueue.removeById(cardId);
@@ -90,6 +98,7 @@ class App extends Component {
   };
 
   updateCardRating = (cardId, rating = 'hard') => {
+    // put for backend
     this.setState(prev => {
       let prevCard = prev.currentCard;
       prevCard.ratings[rating] += 1;
