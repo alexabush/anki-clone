@@ -29,11 +29,11 @@ router
   });
 // ROUTER FOR USERS => GET BY ID, UPDATE, DELETE
 router
-  .route('/users/:id')
+  .route('/users/:userId')
   .get(function(req, res, next) {
     console.log('in / user get by id');
     models.User.findOne({
-      where: { id: req.params.id }
+      where: { id: req.params.userId }
     }).then(user => {
       res.json({ message: 'got user by id', data: user });
     });
@@ -42,7 +42,7 @@ router
     let newData = _.pickBy(req.body, data => !!data);
     models.User.update(newData, {
       returning: true,
-      where: { id: req.params.id }
+      where: { id: req.params.userId }
     }).then(queryData => {
       let updatedTodo = queryData[1];
       res.json({ message: 'updated a user', data: updatedTodo });
@@ -51,7 +51,7 @@ router
   .delete(function(req, res, next) {
     models.User.destroy({
       where: {
-        id: req.params.id
+        id: req.params.userId
       }
     }).then(() => {
       res.json({ message: 'deleted a user' });
@@ -59,7 +59,7 @@ router
   });
 // ROUTER FOR DECKS => GET ALL, POST
 router
-  .route('/users/:id/decks')
+  .route('/users/:userId/decks')
   .get(function(req, res, next) {
     models.Deck.findAll().then(decks => {
       res.json({ message: 'this is all decks', data: decks });
@@ -68,44 +68,51 @@ router
   .post(function(req, res, next) {
     // get user data from req
     models.Deck.create({
-      name: req.body.name
+      name: req.body.name,
+      userId: req.params.userId
     }).then(function(deck) {
       res.json({ message: 'posted a deck', data: deck });
     });
   });
 // ROUTER FOR DECKS => GET BY ID, UPDATE, DELETE
 router
-  .route('/users/:id/decks/:deckId')
+  .route('/users/:userId/decks/:deckId')
   .get(function(req, res, next) {
-    // res.json({params: req.params})
+    let { userId, deckId } = req.params;
+    // res.json({ userId, deckId})
     models.Deck.findOne({
-      where: { deckId: req.params.deckId }
+      where: { id: deckId, userId }
     }).then(deck => {
       res.json({ message: 'got deck by id', data: deck });
     });
   })
   .put(function(req, res, next) {
+    let { userId, deckId } = req.params;
     let newData = _.pickBy(req.body, data => !!data);
     models.Deck.update(newData, {
       returning: true,
-      where: { deckId: req.params.deckId }
-    }).then(queryData => {
-      let updatedTodo = queryData[1];
-      res.json({ message: 'updated a deck', data: updatedTodo });
-    });
+      where: { id: deckId, userId }
+    })
+      .then(queryData => {
+        let updatedTodo = queryData[1];
+        res.json({ message: 'updated a deck', data: updatedTodo });
+      })
+      .catch(e => {
+        console.log('error in deckId put');
+        res.json({ message: 'error', data: e });
+      });
   })
   .delete(function(req, res, next) {
+    let { userId, deckId } = req.params;
     models.Deck.destroy({
-      where: {
-        deckId: req.params.deckId
-      }
+      where: { id: deckId, userId }
     }).then(() => {
       res.json({ message: 'deleted a deck' });
     });
   });
 // ROUTER FOR CARDS => GET ALL, POST
 router
-  .route('/users/:id/decks/:deckId/cards')
+  .route('/users/:userId/decks/:deckId/cards')
   .get(function(req, res, next) {
     models.Card.findAll().then(cards => {
       res.json({ message: 'this is all cards', data: cards });
@@ -119,36 +126,38 @@ router
       easy,
       medium,
       hard,
-      priority
+      priority,
+      deckId: req.params.deckId
     }).then(function(card) {
       res.json({ message: 'posted a card', data: card });
     });
   });
 // ROUTER FOR CARDS => GET BY ID, UPDATE, DELETE
 router
-  .route('/users/:id/decks/:deckId/cards/:cardId')
+  .route('/users/:userId/decks/:deckId/cards/:cardId')
   .get(function(req, res, next) {
+    let { cardId, deckId } = req.params;
     models.Card.findOne({
-      where: { cardId: req.params.cardId }
+      where: { id: cardId, deckId }
     }).then(card => {
       res.json({ message: 'got card by id', data: card });
     });
   })
   .put(function(req, res, next) {
+    let { cardId, deckId } = req.params;
     let newData = _.pickBy(req.body, data => !!data);
     models.Card.update(newData, {
       returning: true,
-      where: { cardId: req.params.cardId }
+      where: { id: cardId, deckId }
     }).then(queryData => {
       let updatedCard = queryData[1];
       res.json({ message: 'updated a user', data: updatedCard });
     });
   })
   .delete(function(req, res, next) {
+    let { cardId, deckId } = req.params;
     models.Card.destroy({
-      where: {
-        cardId: req.params.cardId
-      }
+      where: { id: cardId, deckId }
     }).then(() => {
       res.json({ message: 'deleted a card' });
     });
