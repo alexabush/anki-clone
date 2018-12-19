@@ -32,11 +32,9 @@ function createCard(
     question,
     answer,
     priority,
-    ratings: {
-      easy,
-      medium,
-      hard
-    }
+    easy,
+    medium,
+    hard
   };
 }
 
@@ -66,30 +64,34 @@ class App extends Component {
   }
 
   addCard = (question, answer) => {
-    // need deckId. Where do I get this from?
     fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ question, answer, deckId })
-    });
-    this.setState(prev => {
-      prev.priorityQueue.push(createCard(question, answer));
-      return { priorityQueue: prev.priorityQueue };
-    });
+      body: JSON.stringify({ question, answer })
+    })
+      .then(res => res.json())
+      .then(({ card }) => {
+        this.setState(prev => {
+          prev.priorityQueue.push(createCard(card.id, question, answer));
+          return { priorityQueue: prev.priorityQueue };
+        });
+      });
   };
 
   deleteCard = cardId => {
-    fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards/${cardId}`, {
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ deckId, cardId })
-    });
+    fetch(
+      `http://localhost:3001/api/users/${userId}/decks/${deckId}/cards/${cardId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }
+    );
     // bug where if current card is deleted it doesn't get deleted
     this.setState(prev => {
       let modifiedQueue = prev.priorityQueue.removeById(cardId);
@@ -98,17 +100,40 @@ class App extends Component {
   };
 
   updateCardRating = (cardId, rating = 'hard') => {
-    // put for backend
+    /*
+      need to make api with update rating and priority
+      need to setState to reflect updated change
+    */
+
+    let cardClone = { ...this.state.currentCard };
+    cardClone[rating] = cardClone[rating] + 1;
+    let { easy, medium, hard } = cardClone;
+    let updateData = {
+      [rating]: cardClone[rating],
+      priority: calcPriority(easy, medium, hard)
+    };
+    debugger;
+    fetch(
+      `http://localhost:3001/api/users/${userId}/decks/${deckId}/cards/${cardId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updateData)
+      }
+    );
     this.setState(prev => {
       let prevCard = prev.currentCard;
-      prevCard.ratings[rating] += 1;
-      prevCard.priority = calcPriority(prevCard.ratings);
+      prevCard[rating] += 1;
+      prevCard.priority = updateData.priority;
       prev.priorityQueue.pop();
       prev.priorityQueue.push(prevCard);
       let newCurrentCard = prev.priorityQueue.peek();
+      debugger;
       return { currentCard: newCurrentCard, priorityQueue: prev.priorityQueue };
     });
-    // make patch to server with updated rating
   };
 
   render() {
@@ -314,16 +339,8 @@ class PriorityQueue {
   };
 }
 
-function calcPriority(ratings = {}) {
-  let lookup = {
-    easy: 10,
-    medium: 5,
-    hard: 1
-  };
-  let priorityScore = Object.keys(ratings).reduce((acc, key) => {
-    acc += ratings[key] * lookup[key];
-    return acc;
-  }, 0);
+function calcPriority(easy = 0, medium = 0, hard = 0) {
+  let priorityScore = easy * 10 + medium * 5 + hard * 1
   return priorityScore;
 }
 
