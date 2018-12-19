@@ -18,10 +18,10 @@ function createCard(
   id,
   question,
   answer,
-  easy,
-  medium,
-  hard,
-  priority
+  easy = 0,
+  medium = 0,
+  hard = 0,
+  priority = 0
 ) {
   return {
     id,
@@ -61,9 +61,22 @@ class App extends Component {
       });
   }
 
-  addCard = (q, a) => {
+  addCard = (question, answer) => {
+    let userId = 1;
+    let deckId = 1;
+    // need deckId. Where do I get this from?
+    fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards`,
+      {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ question, answer, deckId })
+      }
+    );
     this.setState(prev => {
-      prev.priorityQueue.push(createCard(q, a));
+      prev.priorityQueue.push(createCard(question, answer));
       return { priorityQueue: prev.priorityQueue };
     });
   };
