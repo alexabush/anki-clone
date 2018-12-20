@@ -100,11 +100,6 @@ class App extends Component {
   };
 
   updateCardRating = (cardId, rating = 'hard') => {
-    /*
-      need to make api with update rating and priority
-      need to setState to reflect updated change
-    */
-
     let cardClone = { ...this.state.currentCard };
     cardClone[rating] = cardClone[rating] + 1;
     let { easy, medium, hard } = cardClone;
@@ -112,7 +107,6 @@ class App extends Component {
       [rating]: cardClone[rating],
       priority: calcPriority(easy, medium, hard)
     };
-    debugger;
     fetch(
       `http://localhost:3001/api/users/${userId}/decks/${deckId}/cards/${cardId}`,
       {
@@ -131,7 +125,6 @@ class App extends Component {
       prev.priorityQueue.pop();
       prev.priorityQueue.push(prevCard);
       let newCurrentCard = prev.priorityQueue.peek();
-      debugger;
       return { currentCard: newCurrentCard, priorityQueue: prev.priorityQueue };
     });
   };
@@ -140,23 +133,62 @@ class App extends Component {
     return (
       <div className="App">
         <div className="container">
+
           <div className="row">
-            <div className="col-sm-6">
-              <Card
-                data={this.state.currentCard}
-                updateCardRating={this.updateCardRating}
-              />
-            </div>
-            <div className="col-sm-6">
-              <Deck
-                currentCard={this.state.currentCard}
-                priorityQueue={this.state.priorityQueue}
-                deleteCard={this.deleteCard}
-              />
-              <AddCardForm addCard={this.addCard} />
-            </div>
+            <UseDeck
+              currentCard={this.state.currentCard}
+              updateCardRating={this.updateCardRating}
+              priorityQueue={this.state.priorityQueue}
+              deleteCard={this.deleteCard}
+            />
+          </div>
+
+          <div className="row">
+            <ManageDeck
+              priorityQueue={this.state.priorityQueue}
+              deleteCard={this.deleteCard}
+              addCard={this.addCard}
+            />
           </div>
         </div>
+      </div>
+    );
+  }
+}
+
+class UseDeck extends Component {
+  render() {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col-sm-6">
+            <Card
+              cardData={this.props.currentCard}
+              updateCardRating={this.props.updateCardRating}
+            />
+          </div>
+          <div className="col-sm-6">
+            <Deck
+              priorityQueue={this.props.priorityQueue}
+              deleteCard={this.props.deleteCard}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+class ManageDeck extends Component {
+  render() {
+    return (
+      <div className="ManageDecks">
+        <h1>Manage Deck</h1>
+        <Deck
+          priorityQueue={this.props.priorityQueue}
+          deleteCard={this.props.deleteCard}
+        />
+        <AddCardForm addCard={this.props.addCard} />
       </div>
     );
   }
@@ -180,7 +212,7 @@ class Card extends Component {
   };
 
   render() {
-    let { question, answer, id } = this.props.data;
+    let { question, answer, id } = this.props.cardData;
     if (!this.state.showAnswer) {
       return (
         <div className="Card">
@@ -248,6 +280,7 @@ class AddCardForm extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.addCard(this.state.q, this.state.a);
+    this.setState({ q: '', a: '' });
   };
 
   render() {
@@ -340,7 +373,7 @@ class PriorityQueue {
 }
 
 function calcPriority(easy = 0, medium = 0, hard = 0) {
-  let priorityScore = easy * 10 + medium * 5 + hard * 1
+  let priorityScore = easy * 10 + medium * 5 + hard * 1;
   return priorityScore;
 }
 

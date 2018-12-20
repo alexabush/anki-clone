@@ -94,8 +94,8 @@ router
       where: { id: deckId, userId }
     })
       .then(queryData => {
-        let updatedDeck = queryData[1];
-        res.json({ message: 'updated a deck', updatedDeck });
+        let deck = queryData[1];
+        res.json({ message: 'updated a deck', deck });
       })
       .catch(e => {
         console.log('error in deckId put');
@@ -146,12 +146,13 @@ router
   .put(function(req, res, next) {
     let { cardId, deckId } = req.params;
     let newData = _.pickBy(req.body, data => !!data);
+    console.log(newData)
     models.Card.update(newData, {
       returning: true,
       where: { id: cardId, deckId }
     }).then(queryData => {
-      let updatedCard = queryData[1];
-      res.json({ message: 'updated a user', updatedCard });
+      let card = queryData[1];
+      res.json({ message: 'updated a user', card });
     });
   })
   .delete(function(req, res, next) {
