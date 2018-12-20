@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import uuid from 'uuid/v4';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import './App.css';
-
-import Delete from '@material-ui/icons/Delete';
+import UseDeck from './components/UseDeck'
+import ManageDeck from './components/ManageDeck'
 
 // these will be dynamic later
 let userId = 1;
@@ -38,7 +39,7 @@ function createCard(
   };
 }
 
-class App extends Component {
+class App extends PureComponent {
   state = {
     currentCard: {},
     priorityQueue: []
@@ -133,7 +134,6 @@ class App extends Component {
     return (
       <div className="App">
         <div className="container">
-
           <div className="row">
             <UseDeck
               currentCard={this.state.currentCard}
@@ -151,187 +151,6 @@ class App extends Component {
             />
           </div>
         </div>
-      </div>
-    );
-  }
-}
-
-class UseDeck extends Component {
-  render() {
-    return (
-      <div className="container">
-        <div className="row">
-          <div className="col-sm-6">
-            <Card
-              cardData={this.props.currentCard}
-              updateCardRating={this.props.updateCardRating}
-            />
-          </div>
-          <div className="col-sm-6">
-            <Deck
-              priorityQueue={this.props.priorityQueue}
-              deleteCard={this.props.deleteCard}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
-class ManageDeck extends Component {
-  render() {
-    return (
-      <div className="ManageDecks">
-        <h1>Manage Deck</h1>
-        <Deck
-          priorityQueue={this.props.priorityQueue}
-          deleteCard={this.props.deleteCard}
-        />
-        <AddCardForm addCard={this.props.addCard} />
-      </div>
-    );
-  }
-}
-
-class Card extends Component {
-  state = { showAnswer: false, selected: 'hard' };
-
-  clickHandler = () => {
-    this.setState({ showAnswer: true });
-  };
-
-  handleSelectChange = e => {
-    this.setState({ selected: e.target.value });
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    console.log(this.props);
-    this.props.updateCardRating(this.props.data.id, this.state.selected);
-  };
-
-  render() {
-    let { question, answer, id } = this.props.cardData;
-    if (!this.state.showAnswer) {
-      return (
-        <div className="Card">
-          <p>{question}</p>
-          <button className="showAnswerBtn" onClick={this.clickHandler}>
-            Show Answer
-          </button>
-        </div>
-      );
-    } else {
-      return (
-        <div className="Card">
-          <p>{question}</p>
-          <p>{answer}</p>
-          <form onSubmit={this.handleSubmit}>
-            <div className="radio">
-              <label>
-                <input
-                  type="radio"
-                  value="easy"
-                  checked={this.state.selected === 'easy'}
-                  onChange={this.handleSelectChange}
-                />
-                Easy
-              </label>
-            </div>
-            <div className="radio">
-              <label>
-                <input
-                  type="radio"
-                  value="medium"
-                  checked={this.state.selected === 'medium'}
-                  onChange={this.handleSelectChange}
-                />
-                Medium
-              </label>
-            </div>
-            <div className="radio">
-              <label>
-                <input
-                  type="radio"
-                  value="hard"
-                  checked={this.state.selected === 'hard'}
-                  onChange={this.handleSelectChange}
-                />
-                Hard
-              </label>
-            </div>
-            <button type="submit">Save</button>
-          </form>
-        </div>
-      );
-    }
-  }
-}
-
-class AddCardForm extends Component {
-  state = { q: '', a: '' };
-
-  handleChange = e => {
-    let { name, value } = e.target;
-    this.setState({ [name]: e.target.value });
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    this.props.addCard(this.state.q, this.state.a);
-    this.setState({ q: '', a: '' });
-  };
-
-  render() {
-    return (
-      <div className="AddCardForm">
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Question:
-            <input
-              type="text"
-              name="q"
-              value={this.state.q}
-              onChange={this.handleChange}
-            />
-          </label>
-          <label>
-            Answer:
-            <input
-              type="text"
-              name="a"
-              value={this.state.a}
-              onChange={this.handleChange}
-            />
-          </label>
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-    );
-  }
-}
-
-class Deck extends Component {
-  handleDelete = id => {
-    this.props.deleteCard(id);
-  };
-
-  render() {
-    let cardLis = [];
-    if (this.props.priorityQueue.getDeck) {
-      cardLis = this.props.priorityQueue.getDeck.map(card => {
-        return (
-          <li key={uuid()}>
-            {`${card.question} ${card.priority}`}
-            <Delete onClick={() => this.handleDelete(card.id)} />
-          </li>
-        );
-      });
-    }
-    return (
-      <div className="Deck">
-        <ul>{cardLis}</ul>
       </div>
     );
   }
@@ -378,3 +197,4 @@ function calcPriority(easy = 0, medium = 0, hard = 0) {
 }
 
 export default App;
+
