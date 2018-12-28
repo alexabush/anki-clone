@@ -10,6 +10,7 @@ class ManageDeck extends PureComponent {
         <Deck
           priorityQueue={this.props.priorityQueue}
           deleteCard={this.props.deleteCard}
+          allowDelete={true}
         />
         <AddCardForm addCard={this.props.addCard} />
       </div>

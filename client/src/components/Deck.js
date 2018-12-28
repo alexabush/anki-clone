@@ -14,7 +14,10 @@ class Deck extends PureComponent {
         return (
           <li key={uuid()}>
             {`${card.question} ${card.priority}`}
-            <Delete onClick={() => this.handleDelete(card.id)} />
+            { (this.props.allowDelete) ?
+              <Delete onClick={() => this.handleDelete(card.id)} />
+              : null
+            }
           </li>
         );
       });
