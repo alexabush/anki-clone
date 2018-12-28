@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import ShowDeck from './ShowDeck';
 import UseDeck from './UseDeck';
 import ManageDeck from './ManageDeck';
+import AddDeckForm from './AddDeckForm';
 
 class SelectDeck extends PureComponent {
   state = {
@@ -12,7 +13,8 @@ class SelectDeck extends PureComponent {
 
   componentDidMount() {
     // implement auth
-    fetch('http://localhost:3001/api/users/2/decks')
+    let { userId } = this.props.nav.match.params;
+    fetch(`http://localhost:3001/api/users/${userId}/decks`)
       .then(res => res.json())
       .then(data => {
         console.log(data);
@@ -22,15 +24,30 @@ class SelectDeck extends PureComponent {
       });
   }
 
+  addDeck = deckName => {
+    let { userId } = this.props.nav.match.params;
+    fetch(`http://localhost:3001/api/users/${userId}/decks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: deckName })
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        this.setState(prev => {
+          return { decks: [...prev.decks, data.deck] };
+        });
+      });
+  };
+
   render() {
     let { userId } = this.props.nav.match.params;
     let decksLis = this.state.decks.map(({ name, id }) => {
       return (
-        <li>
-          {name}
-          {' '}
-          <Link to={`/users/${userId}/decks/${id}/useDeck`}>Use</Link>
-          {' '}
+        <li key={id}>
+          {name} <Link to={`/users/${userId}/decks/${id}/useDeck`}>Use</Link>{' '}
           <Link to={`/users/${userId}/decks/${id}/manageDeck`}>Manage</Link>
         </li>
       );
@@ -39,6 +56,7 @@ class SelectDeck extends PureComponent {
       <div>
         <h1>Select Deck</h1>
         <ol>{decksLis}</ol>
+        <AddDeckForm addDeck={this.addDeck} />
       </div>
     );
   }
