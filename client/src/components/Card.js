@@ -14,7 +14,7 @@ class Card extends PureComponent {
   handleSubmit = e => {
     e.preventDefault();
     console.log(this.props);
-    this.props.updateCardRating(this.props.data.id, this.state.selected);
+    this.props.updateCardRating(this.props.cardData.id, this.state.selected);
   };
 
   render() {
