@@ -61,12 +61,16 @@ router
 router
   .route('/users/:userId/decks')
   .get(function(req, res, next) {
-    models.Deck.findAll().then(decks => {
+    models.Deck.findAll({
+      where: {
+        userId: req.params.userId
+      }
+    })
+    .then(decks => {
       res.json({ message: 'this is all decks', decks });
     });
   })
   .post(function(req, res, next) {
-    // get user data from req
     models.Deck.create({
       name: req.body.name,
       userId: req.params.userId
@@ -79,7 +83,6 @@ router
   .route('/users/:userId/decks/:deckId')
   .get(function(req, res, next) {
     let { userId, deckId } = req.params;
-    // res.json({ userId, deckId})
     models.Deck.findOne({
       where: { id: deckId, userId }
     }).then(deck => {
@@ -114,6 +117,7 @@ router
 router
   .route('/users/:userId/decks/:deckId/cards')
   .get(function(req, res, next) {
+    // should only return cards from the deck and user specified
     models.Card.findAll().then(cards => {
       res.json({ message: 'this is all cards', cards });
     });

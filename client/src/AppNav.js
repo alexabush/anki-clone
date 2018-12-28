@@ -21,7 +21,10 @@ class AppNav extends PureComponent {
     return (
       <Router>
         <div>
-          <Route exact path="/" component={SelectDeck} />
+          <Route exact path="/" component={() => (
+            <div>Please enter the your user id into the url bar manually</div>
+          )}
+          />
           <Route exact path="/users/:userId/decks" component={SelectDeckOption} />
           <Route path="/users/:userId/decks/:deckId/useDeck" component={UseDeckOption} />
           <Route path="/users/:userId/decks/:deckId/manageDeck" component={ManageDeckOption} />

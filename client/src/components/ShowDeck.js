@@ -19,7 +19,9 @@ class ShowDeck extends PureComponent {
 
   componentDidMount() {
     // implement auth
-    fetch('http://localhost:3001/api/users/2/decks/4/cards')
+    let { userId, deckId } = this.props.nav.match.params
+    debugger
+    fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards`)
       .then(res => res.json())
       .then(data => {
         this.setState(() => {

@@ -43,6 +43,7 @@ class SelectDeck extends PureComponent {
   };
 
   render() {
+    console.log('SelectDeck')
     let { userId } = this.props.nav.match.params;
     let decksLis = this.state.decks.map(({ name, id }) => {
       return (
