@@ -1,7 +1,7 @@
 {
   "development": {
-    "username": "macbook",
-    "password": null,
+    "username": "",
+    "password": "",
     "database": "anki",
     "host": "127.0.0.1",
     "dialect": "postgres"

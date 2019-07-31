@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "concurrently \"yarn run server\" \"yarn run client\"",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon ./bin/www",
-    "client": "cd client && yarn start"
+    "client": "cd client && npm start"
   },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
@@ -19,9 +19,12 @@
     "express": "~4.15.2",
     "jade": "~1.11.0",
     "morgan": "~1.8.1",
-    "pg": "^7.7.1",
-    "pg-hstore": "^2.3.2",
-    "sequelize": "^4.42.0",
+    "pg": "^7.12.0",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^4.44.2",
     "serve-favicon": "~2.4.2"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^5.5.0"
   }
 }

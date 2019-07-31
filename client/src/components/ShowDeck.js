@@ -7,10 +7,6 @@ import createCard from '../helpers/createCard.js';
 import PriorityQueue from '../helpers/PriorityQueue.js';
 import calcPriority from '../helpers/calcPriority.js';
 
-// these will be dynamic later
-let userId = 1;
-let deckId = 1;
-
 class ShowDeck extends PureComponent {
   state = {
     currentCard: {},
@@ -19,14 +15,16 @@ class ShowDeck extends PureComponent {
 
   componentDidMount() {
     // implement auth
-    let { userId, deckId } = this.props.nav.match.params
-    debugger
+    let { userId, deckId } = this.props.nav.match.params;
     fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards`)
       .then(res => res.json())
       .then(data => {
-        this.setState(() => {
+        console.log('data', data);
+        this.setState(state => {
+          if (data.cards.length < 1) return state;
           let queue = new PriorityQueue();
           for (let card of data.cards) {
+            console.log('card', card);
             let { id, question, answer, easy, medium, hard, priority } = card;
             queue.push(
               createCard(id, question, answer, easy, medium, hard, priority)
@@ -39,6 +37,8 @@ class ShowDeck extends PureComponent {
   }
 
   addCard = (question, answer) => {
+    console.log('in showdeck.js addcard');
+    let { userId, deckId } = this.props.nav.match.params;
     fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards`, {
       method: 'POST',
       headers: {
@@ -57,6 +57,7 @@ class ShowDeck extends PureComponent {
   };
 
   deleteCard = cardId => {
+    let { userId, deckId } = this.props.nav.match.params;
     fetch(
       `http://localhost:3001/api/users/${userId}/decks/${deckId}/cards/${cardId}`,
       {
@@ -75,6 +76,7 @@ class ShowDeck extends PureComponent {
   };
 
   updateCardRating = (cardId, rating = 'hard') => {
+    let { userId, deckId } = this.props.nav.match.params;
     let cardClone = { ...this.state.currentCard };
     cardClone[rating] = cardClone[rating] + 1;
     let { easy, medium, hard } = cardClone;

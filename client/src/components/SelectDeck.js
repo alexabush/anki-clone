@@ -12,6 +12,7 @@ class SelectDeck extends PureComponent {
   };
 
   componentDidMount() {
+    console.log('SelectDeck cdm');
     // implement auth
     let { userId } = this.props.nav.match.params;
     fetch(`http://localhost:3001/api/users/${userId}/decks`)
@@ -27,9 +28,9 @@ class SelectDeck extends PureComponent {
   addDeck = deckName => {
     let { userId } = this.props.nav.match.params;
     fetch(`http://localhost:3001/api/users/${userId}/decks`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ name: deckName })
     })
@@ -43,7 +44,7 @@ class SelectDeck extends PureComponent {
   };
 
   render() {
-    console.log('SelectDeck')
+    console.log('SelectDeck');
     let { userId } = this.props.nav.match.params;
     let decksLis = this.state.decks.map(({ name, id }) => {
       return (
@@ -58,6 +59,7 @@ class SelectDeck extends PureComponent {
         <h1>Select Deck</h1>
         <ol>{decksLis}</ol>
         <AddDeckForm addDeck={this.addDeck} />
+        <Link to={`/users`}>Back to all users</Link>
       </div>
     );
   }
