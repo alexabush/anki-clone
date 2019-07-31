@@ -4,8 +4,9 @@ import AddCardForm from './AddCardForm';
 
 class ManageDeck extends PureComponent {
   render() {
+    console.log('ManageDeck', this.props.priorityQueue);
     return (
-      <div className="ManageDecks">
+      <div className="manage-deck">
         <h1>Manage Deck</h1>
         <Deck
           priorityQueue={this.props.priorityQueue}

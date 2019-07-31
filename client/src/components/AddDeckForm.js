@@ -1,37 +1,41 @@
 import React, { PureComponent } from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
-class AddCardForm extends PureComponent {
+class AddDeckForm extends PureComponent {
   state = { name: '' };
 
   handleChange = e => {
     let { name, value } = e.target;
-    this.setState({ [name]: e.target.value });
+    this.setState({ [name]: value });
   };
 
   handleSubmit = e => {
     e.preventDefault();
     this.props.addDeck(this.state.name);
-    this.setState({ name: ''});
+    this.setState({ name: '' });
   };
 
   render() {
     return (
       <div className="AddDeckForm">
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              value={this.state.name}
-              onChange={this.handleChange}
-            />
-          </label>
-          <button type="submit">Submit</button>
-        </form>
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Group controlId="name">
+            <Form.Label>
+              Name:
+              <Form.Control
+                type="text"
+                name="name"
+                value={this.state.name}
+                onChange={this.handleChange}
+              />
+            </Form.Label>
+          </Form.Group>
+          <Button type="submit">Submit</Button>
+        </Form>
       </div>
     );
   }
 }
 
-export default AddCardForm;
+export default AddDeckForm;

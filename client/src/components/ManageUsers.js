@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+// import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import AddUserForm from './AddUserForm';
 
 export class ManageUsers extends Component {
@@ -94,11 +94,14 @@ export class ManageUsers extends Component {
   render() {
     return (
       <div className="ShowDeck">
+        <h2>Users</h2>
         <ul>
           {this.state.users.map(({ id: userId, name, email }) => {
             return (
               <li>
-                {name} {email}
+                <div>
+                  {name} {email}
+                </div>
                 <Link to={`/users/${userId}/decks`}>View Decks</Link>
               </li>
             );

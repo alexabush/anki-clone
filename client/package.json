@@ -5,8 +5,9 @@
   "dependencies": {
     "@material-ui/core": "^3.7.0",
     "@material-ui/icons": "^3.0.1",
+    "bootstrap": "^4.3.1",
     "react": "^16.6.3",
-    "react-bootstrap": "^0.32.4",
+    "react-bootstrap": "^1.0.0-beta.10",
     "react-dom": "^16.6.3",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1"

@@ -10,20 +10,20 @@ class Deck extends PureComponent {
   render() {
     let cardLis = [];
     if (this.props.priorityQueue.getDeck) {
-      cardLis = this.props.priorityQueue.getDeck.map(card => {
+      cardLis = this.props.priorityQueue.getDeck.map((card, idx) => {
         return (
-          <li key={uuid()}>
-            {`${card.question} ${card.priority}`}
-            { (this.props.allowDelete) ?
+          <li className="card-li" key={uuid()}>
+            {idx + 1} Q. {card.question}
+            {this.props.allowDelete ? (
               <Delete onClick={() => this.handleDelete(card.id)} />
-              : null
-            }
+            ) : null}
           </li>
         );
       });
     }
     return (
       <div className="Deck">
+        <h3>Upcoming Cards</h3>
         <ul>{cardLis}</ul>
       </div>
     );

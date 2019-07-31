@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import uuid from 'uuid/v4';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+// import uuid from 'uuid/v4';
+import { Link } from 'react-router-dom';
 import UseDeck from './UseDeck';
 import ManageDeck from './ManageDeck';
 import createCard from '../helpers/createCard.js';
@@ -10,7 +10,7 @@ import calcPriority from '../helpers/calcPriority.js';
 class ShowDeck extends PureComponent {
   state = {
     currentCard: {},
-    priorityQueue: []
+    priorityQueue: new PriorityQueue()
   };
 
   componentDidMount() {
@@ -19,25 +19,27 @@ class ShowDeck extends PureComponent {
     fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards`)
       .then(res => res.json())
       .then(data => {
-        console.log('data', data);
         this.setState(state => {
           if (data.cards.length < 1) return state;
-          let queue = new PriorityQueue();
-          for (let card of data.cards) {
-            console.log('card', card);
-            let { id, question, answer, easy, medium, hard, priority } = card;
-            queue.push(
-              createCard(id, question, answer, easy, medium, hard, priority)
-            );
-          }
-          let newCard = queue.peek();
-          return { priorityQueue: queue, currentCard: newCard };
+          const newPriorityQueue = this.buildPriorityQueue(data.cards);
+          let newCard = newPriorityQueue.peek();
+          return { priorityQueue: newPriorityQueue, currentCard: newCard };
         });
       });
   }
 
+  buildPriorityQueue = cards => {
+    const newPriorityQueue = new PriorityQueue();
+    cards.forEach(card => {
+      let { id, question, answer, easy, medium, hard, priority } = card;
+      newPriorityQueue.push(
+        createCard(id, question, answer, easy, medium, hard, priority)
+      );
+    });
+    return newPriorityQueue;
+  };
+
   addCard = (question, answer) => {
-    console.log('in showdeck.js addcard');
     let { userId, deckId } = this.props.nav.match.params;
     fetch(`http://localhost:3001/api/users/${userId}/decks/${deckId}/cards`, {
       method: 'POST',
@@ -50,8 +52,11 @@ class ShowDeck extends PureComponent {
       .then(res => res.json())
       .then(({ card }) => {
         this.setState(prev => {
-          prev.priorityQueue.push(createCard(card.id, question, answer));
-          return { priorityQueue: prev.priorityQueue };
+          const newPriorityQueue = this.buildPriorityQueue([
+            ...prev.priorityQueue.getDeck,
+            card
+          ]);
+          return { priorityQueue: newPriorityQueue };
         });
       });
   };

@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import Button from 'react-bootstrap/Button';
 
 class Card extends PureComponent {
   state = { showAnswer: false, selected: 'hard' };
@@ -14,25 +15,28 @@ class Card extends PureComponent {
   handleSubmit = e => {
     e.preventDefault();
     console.log(this.props);
+    this.setState({ showAnswer: false });
     this.props.updateCardRating(this.props.cardData.id, this.state.selected);
   };
 
   render() {
-    let { question, answer, id } = this.props.cardData;
+    let { question, answer } = this.props.cardData;
     if (!this.state.showAnswer) {
       return (
         <div className="Card">
-          <p>{question}</p>
-          <button className="showAnswerBtn" onClick={this.clickHandler}>
+          <h3>Current Question</h3>
+          <p>Q. {question}</p>
+          <Button className="showAnswerBtn" onClick={this.clickHandler}>
             Show Answer
-          </button>
+          </Button>
         </div>
       );
     } else {
       return (
         <div className="Card">
-          <p>{question}</p>
-          <p>{answer}</p>
+          <h3>Rate Question Difficulty</h3>
+          <p>Q. {question}</p>
+          <p>A. {answer}</p>
           <form onSubmit={this.handleSubmit}>
             <div className="radio">
               <label>
@@ -67,7 +71,7 @@ class Card extends PureComponent {
                 Hard
               </label>
             </div>
-            <button type="submit">Save</button>
+            <Button type="submit">Save</Button>
           </form>
         </div>
       );

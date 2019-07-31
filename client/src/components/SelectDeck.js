@@ -1,9 +1,5 @@
 import React, { PureComponent } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-
-import ShowDeck from './ShowDeck';
-import UseDeck from './UseDeck';
-import ManageDeck from './ManageDeck';
+import { Link } from 'react-router-dom';
 import AddDeckForm from './AddDeckForm';
 
 class SelectDeck extends PureComponent {
@@ -49,8 +45,17 @@ class SelectDeck extends PureComponent {
     let decksLis = this.state.decks.map(({ name, id }) => {
       return (
         <li key={id}>
-          {name} <Link to={`/users/${userId}/decks/${id}/useDeck`}>Use</Link>{' '}
-          <Link to={`/users/${userId}/decks/${id}/manageDeck`}>Manage</Link>
+          {name}
+          <div>
+            <Link to={`/users/${userId}/decks/${id}/useDeck`}>
+              Use This Deck
+            </Link>{' '}
+          </div>
+          <div>
+            <Link to={`/users/${userId}/decks/${id}/manageDeck`}>
+              Add/Remove Cards
+            </Link>
+          </div>
         </li>
       );
     });
@@ -58,6 +63,7 @@ class SelectDeck extends PureComponent {
       <div>
         <h1>Select Deck</h1>
         <ol>{decksLis}</ol>
+        <h2>Add New Deck</h2>
         <AddDeckForm addDeck={this.addDeck} />
         <Link to={`/users`}>Back to all users</Link>
       </div>
