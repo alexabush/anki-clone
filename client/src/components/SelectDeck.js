@@ -11,7 +11,7 @@ class SelectDeck extends PureComponent {
     console.log('SelectDeck cdm');
     // implement auth
     let { userId } = this.props.nav.match.params;
-    fetch(`http://localhost:3001/api/users/${userId}/decks`)
+    fetch(`/api/users/${userId}/decks`)
       .then(res => res.json())
       .then(data => {
         console.log(data);
@@ -23,7 +23,7 @@ class SelectDeck extends PureComponent {
 
   addDeck = deckName => {
     let { userId } = this.props.nav.match.params;
-    fetch(`http://localhost:3001/api/users/${userId}/decks`, {
+    fetch(`/api/users/${userId}/decks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

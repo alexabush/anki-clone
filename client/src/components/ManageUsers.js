@@ -12,7 +12,7 @@ export class ManageUsers extends Component {
 
   componentDidMount() {
     // implement auth
-    fetch(`http://localhost:3001/api/users`)
+    fetch(`/api/users`)
       .then(res => res.json())
       .then(data => {
         console.log('data', data);
@@ -25,7 +25,7 @@ export class ManageUsers extends Component {
 
   addUser = (name, email, password) => {
     console.log('in showdeck.js addUser');
-    fetch(`http://localhost:3001/api/users`, {
+    fetch(`/api/users`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -44,7 +44,7 @@ export class ManageUsers extends Component {
   //   deleteCard = cardId => {
   //     let { userId, deckId } = this.props.nav.match.params;
   //     fetch(
-  //       `http://localhost:3001/api/users/${userId}/decks/${deckId}/cards/${cardId}`,
+  //       `/api/users/${userId}/decks/${deckId}/cards/${cardId}`,
   //       {
   //         method: 'DELETE',
   //         headers: {
@@ -70,7 +70,7 @@ export class ManageUsers extends Component {
   //       priority: calcPriority(easy, medium, hard)
   //     };
   //     fetch(
-  //       `http://localhost:3001/api/users/${userId}/decks/${deckId}/cards/${cardId}`,
+  //       `/api/users/${userId}/decks/${deckId}/cards/${cardId}`,
   //       {
   //         method: 'PUT',
   //         headers: {
