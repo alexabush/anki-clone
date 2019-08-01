@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-require('dotenv').config();
+// require('dotenv').config();
 var app = require('../app');
 var debug = require('debug')('anki-clone:server');
 var http = require('http');
