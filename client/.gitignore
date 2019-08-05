@@ -16,3 +16,6 @@
 .env.production.local
 
 npm-debug.log*
+
+# I'm ADDING THESE
+.env
