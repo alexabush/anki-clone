@@ -5,7 +5,12 @@ export class Layout extends Component {
   static propTypes = {};
 
   render() {
-    return <div className="Layout">{this.props.children}</div>;
+    return (
+      <div className="Layout">
+        <p>Inspired by Anki</p>
+        {this.props.children}
+      </div>
+    );
   }
 }
 

@@ -12,6 +12,7 @@ export class ManageUsers extends Component {
 
   componentDidMount() {
     // implement auth
+    console.log('in cdm manage users');
     fetch(`/api/users`)
       .then(res => res.json())
       .then(data => {
@@ -20,6 +21,9 @@ export class ManageUsers extends Component {
           if (data.users.length < 1) return state;
           return { users: data.users };
         });
+      })
+      .catch(e => {
+        console.log('There was a problem getting user data', e);
       });
   }
 

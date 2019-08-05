@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import SelectDeck from './components/SelectDeck';
 import ShowDeck from './components/ShowDeck';
@@ -7,6 +7,9 @@ import ManageUsers from './components/ManageUsers';
 import Layout from './components/Layout';
 
 console.log('IN APPNAV.js AKA root');
+const RedirectComponent = () => {
+  return <Redirect to="/users" />;
+};
 const SelectDeckOption = props => {
   return <SelectDeck nav={props} />;
 };
@@ -23,8 +26,10 @@ class AppNav extends PureComponent {
   render() {
     return (
       <Layout>
+        <h1>Flashcards</h1>
         <Router>
           <div>
+            <Route exact path="/" component={() => <RedirectComponent />} />
             <Route exact path="/users" component={() => <ManageUsers />} />
             <Route
               exact
