@@ -4,15 +4,18 @@
  * Module dependencies.
  */
 
-// require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 var app = require('../app');
 var debug = require('debug')('anki-clone:server');
 var http = require('http');
 /**
  * Get port from environment and store in Express.
  */
+console.log('process.env is:', process.env);
 
-var port = normalizePort(process.env.PORT || '3001');
+var port = normalizePort(process.env.PORT || 1234);
 app.set('port', port);
 
 /**

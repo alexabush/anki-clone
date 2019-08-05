@@ -19,8 +19,11 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', function(req, res) {
+  res.send(JSON.stringify({ Hello: 'World' }));
+});
 app.use('/api', api);
 console.log('in app.js of server');
 
