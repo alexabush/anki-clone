@@ -5,9 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "dev-server": "nodemon ./bin/www",
-    "client": "cd client && npm start",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "dev-server": "nodemon ./bin/www"
   },
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
